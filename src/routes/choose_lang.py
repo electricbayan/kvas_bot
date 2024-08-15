@@ -1,6 +1,7 @@
 from aiogram import Router, types
 from aiogram.filters import Command
 from src.keyboards.choose_lang_kb import lang_kb
+from aiogram.types import CallbackQuery
 
 
 
@@ -12,3 +13,8 @@ async def choose_language_message(message: types.Message):
         Please, choose your language below.
         Пожалуйста, выберите язык.
     """, reply_markup=lang_kb)
+
+@lang_rt.callback_query()
+async def test(callback: CallbackQuery):
+    if callback.data == "ru":
+        print(1)
