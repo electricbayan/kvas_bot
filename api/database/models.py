@@ -10,6 +10,5 @@ class Base(DeclarativeBase):
 
 class User(Base):
     __tablename__ = "users"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    tg_id: Mapped[str]
+    tg_id: Mapped[str] = mapped_column(unique=True, primary_key=True)
     lang: Mapped[str]

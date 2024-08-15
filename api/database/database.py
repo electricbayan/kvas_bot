@@ -20,9 +20,15 @@ class Database:
             await con.run_sync(Base.metadata.create_all)
 
     async def insert_user(self, tg_id, lang="ru"):
+        
         async with session_factory() as session:
-            dataobj = User(tg_id=tg_id, lang=lang)
-            session.add(dataobj)
+            user = await session.get(User, {'tg_id': tg_id})
+            if not user:
+                dataobj = User(tg_id=tg_id, lang=lang)
+                session.add(dataobj)
+            else:
+                user.lang=lang
+            await session.flush()
             await session.commit()
     
     async def edit_language():
