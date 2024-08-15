@@ -1,7 +1,12 @@
 {
     "choose_language": "Please, select your language below. \nПожалуйста, выберите язык.",
     "ru": 
-        {"greeting": "Приветственное"},
+        {"greeting": "Приветственное",
+        "offers": "Услуги в какой обсти вас интересуют",
+        "help": "Чем помочь",
+        "courses": "",
+        "servers": ""
+        },
     "en":
-        {}
+        {"greeting": "greeting"}
 }
