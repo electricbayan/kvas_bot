@@ -31,8 +31,13 @@ class Database:
             await session.flush()
             await session.commit()
     
-    async def edit_language():
-        pass
+    async def get_language(self, tg_id):
+        try:
+            async with session_factory() as session:
+                user = await session.get(User, {'tg_id': str(tg_id)})
+                return user.lang
+        except AttributeError:
+            return "en"
     
 
 async def main():
