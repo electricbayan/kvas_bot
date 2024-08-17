@@ -8,5 +8,10 @@
         "servers": ""
         },
     "en":
-        {"greeting": "greeting"}
+        {"greeting": "Greeting",
+        "offers": "Offers",
+        "help": "Help",
+        "courses": "",
+        "servers": ""
+        }
 }

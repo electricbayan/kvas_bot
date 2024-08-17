@@ -7,7 +7,6 @@ import asyncio
 
 engine = create_async_engine(
     url=settings.DATABASE_URL,
-    echo=True
 )
 session_factory = async_sessionmaker(engine)
 

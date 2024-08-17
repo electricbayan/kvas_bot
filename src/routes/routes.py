@@ -19,6 +19,7 @@ async def greeting_msg(callback: CallbackQuery):
     await callback.answer('')
 
 
+
 @main_rt.callback_query(F.data=='offers')
 async def services(callback: CallbackQuery):
     lang = await db.get_language(callback.from_user.id)
