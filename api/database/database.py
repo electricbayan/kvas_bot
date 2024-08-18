@@ -1,7 +1,7 @@
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from sqlalchemy import URL, text
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy import text
 from config import settings
-from api.database.models import Base, User
+from api.database.models import Base, User, Admin
 import asyncio
 
 
@@ -9,6 +9,9 @@ engine = create_async_engine(
     url=settings.DATABASE_URL,
 )
 session_factory = async_sessionmaker(engine)
+
+class UserNotFound(Exception):
+    pass
 
 
 class Database:
@@ -18,7 +21,7 @@ class Database:
             await con.run_sync(Base.metadata.drop_all)
             await con.run_sync(Base.metadata.create_all)
 
-    async def insert_user(self, tg_id, lang="ru"):
+    async def insert_user(self, tg_id: str, lang="ru"):
         
         async with session_factory() as session:
             user = await session.get(User, {'tg_id': tg_id})
@@ -30,7 +33,7 @@ class Database:
             await session.flush()
             await session.commit()
     
-    async def get_language(self, tg_id):
+    async def get_language(self, tg_id: str):
         try:
             async with session_factory() as session:
                 user = await session.get(User, {'tg_id': str(tg_id)})
@@ -44,6 +47,25 @@ class Database:
 
     async def add_creator(self):
         pass
+
+    async def add_admin(self, tg_id: str):
+        async with session_factory() as session:
+            admin = await session.get(Admin, {'tg_id': tg_id})
+            if not admin:
+                dataobj = Admin(tg_id=tg_id)
+                session.add(dataobj)
+            await session.flush()
+            await session.commit()
+
+    async def remove_admin(self, tg_id: str):
+        async with session_factory() as session:
+            admin = await session.get(Admin, {'tg_id': tg_id})
+            if admin:
+                await session.delete(admin)
+                await session.flush()
+                await session.commit()
+            else:
+                raise UserNotFound
     
 
 async def main():
