@@ -3,15 +3,13 @@ from sqlalchemy import text
 from config import settings
 from api.database.models import Base, User, Admin
 import asyncio
+from src.exceptions import UserNotFound
 
 
 engine = create_async_engine(
     url=settings.DATABASE_URL,
 )
 session_factory = async_sessionmaker(engine)
-
-class UserNotFound(Exception):
-    pass
 
 
 class Database:

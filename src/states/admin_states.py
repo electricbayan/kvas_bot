@@ -5,3 +5,7 @@ class AddAdmin(StatesGroup):
     nick_adding = State()
     nick_removing = State()
     
+
+class AddCreator(StatesGroup):
+    nick_adding = State()
+    nick_removing = State()
