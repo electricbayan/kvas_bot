@@ -8,6 +8,15 @@ offers_kb = InlineKeyboardMarkup(inline_keyboard=[[
      InlineKeyboardButton(text='Ресурспаки', callback_data="resourses")],
     [InlineKeyboardButton(text='Назад', callback_data='ru')
 ]])
+offers_kb_admin = InlineKeyboardMarkup(inline_keyboard=[[
+    InlineKeyboardButton(text='Рисование', callback_data='drawing'),
+    InlineKeyboardButton(text='3D', callback_data='3d')],
+    [InlineKeyboardButton(text='Моды', callback_data='mods'),
+     InlineKeyboardButton(text='Ресурспаки', callback_data="resourses")],
+    [InlineKeyboardButton(text='Добавить админа', callback_data="add_admin"), 
+     InlineKeyboardButton(text="Добавить исполнителя", callback_data="add_creator")]
+    [InlineKeyboardButton(text='Назад', callback_data='ru')
+]])
 
 
 service_kb = InlineKeyboardMarkup(inline_keyboard=[[

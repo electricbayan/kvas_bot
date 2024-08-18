@@ -37,6 +37,13 @@ class Database:
                 return user.lang
         except AttributeError:
             return "en"
+        
+    async def get_free_creator(self, work_type):
+        pass
+
+
+    async def add_creator(self):
+        pass
     
 
 async def main():
