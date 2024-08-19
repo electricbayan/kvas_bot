@@ -17,7 +17,7 @@ service_kb_admin = InlineKeyboardMarkup(inline_keyboard=[[
     [InlineKeyboardButton(text='Добавить админа', callback_data="add_admin"), 
      InlineKeyboardButton(text="Добавить исполнителя", callback_data="add_creator")],
      [InlineKeyboardButton(text='Удалить админа', callback_data='remove_admin'),
-      InlineKeyboardButton(text='Удалить исполнителя', callback_data='remvoe_creator')],
+      InlineKeyboardButton(text='Удалить исполнителя', callback_data='remove_creator')],
     [InlineKeyboardButton(text="Смена языка", callback_data="choose_lang")
 ]])
 

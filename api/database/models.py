@@ -1,5 +1,5 @@
 # from sqlalchemy import MetaData
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship, Relationship
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import ForeignKey
 
@@ -18,29 +18,31 @@ class User(Base):
 class Creator(Base):
     __tablename__ = "creators"
     tg_id: Mapped[str] = mapped_column(unique=True, primary_key=True)
-    skill: Mapped[str]
     is_busy: Mapped[bool] = True
 
 
-class OrderType(Base):
-    __tablename__ = "ordertypes"
+class SkillType(Base):
+    __tablename__ = "skilltypes"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
 
 
-class CreatorOrderType(Base):
-    __tablename__ = "creator_ordertype"
+class CreatorSkillType(Base):
+    __tablename__ = "creators_skilltypes"
     id: Mapped[int] = mapped_column(primary_key=True)
-    ordertype_id: Mapped[int] = mapped_column(ForeignKey("ordertypes.id"))
-    creator_id: Mapped[int] = mapped_column(ForeignKey("creators.tg_id"))
+    skilltype_id: Mapped[int] = mapped_column(ForeignKey("skilltypes.id", ondelete='CASCADE'))
+    creator_id: Mapped[int] = mapped_column(ForeignKey("creators.tg_id", ondelete='CASCADE'))
 
 
 class Order(Base):
     __tablename__ = "orders"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    creator_id: Mapped[int] = mapped_column(ForeignKey("creators.tg_id"))
+    creator_id: Mapped[int] = mapped_column(ForeignKey("creators.tg_id"), nullable=True)
     customer_id: Mapped[int] = mapped_column(ForeignKey("users.tg_id"))
-    work_type: Mapped[str]
+    order_type: Mapped[str]
+    description: Mapped[str]
+    amount: Mapped[str]
+    is_payed: Mapped[bool] = False
 
 
 class Admin(Base):

@@ -28,7 +28,7 @@ async def add_creator(callback: CallbackQuery, state: FSMContext):
 
 
 @creator_rt.message(AddCreator.nick_adding)
-async def creator_added(message: Message, state: FSMContext):
+async def creator_adding(message: Message, state: FSMContext):
     try:
         userid = await resolve_username_to_channel_id(message.text.strip())
         await message.answer('Выберите навык исполнителя из списка', reply_markup=adding_skills_admin)
@@ -54,10 +54,11 @@ async def creator_added(callback: CallbackQuery, state: FSMContext):
 
 
 @creator_rt.message(AddCreator.nick_removing)
-async def admin_added(message: Message, state: FSMContext):
+async def creator_removed(message: Message, state: FSMContext):
+
     try:
         userid = await resolve_username_to_channel_id(message.text.strip())
-        await db.remove_creator(str(userid))
+        await db.remove_creator(str(userid)) 
         await message.answer('Успешно.')
     except (UsernameInvalid, UsernameNotOccupied):
         await message.answer('Неверное имя пользователя')
@@ -65,3 +66,4 @@ async def admin_added(message: Message, state: FSMContext):
         await message.answer('Пользователь не найден')
     await message.answer(message_text['ru']['greeting'], reply_markup=service_kb_admin)
     await state.clear()
+

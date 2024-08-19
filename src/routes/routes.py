@@ -25,10 +25,11 @@ async def greeting_msg(callback: CallbackQuery, state: FSMContext):
 
 
 @main_rt.callback_query(F.data=='offers')
-async def services(callback: CallbackQuery):
+async def services(callback: CallbackQuery, state: FSMContext):
     lang = await db.get_language(callback.from_user.id)
     await callback.message.edit_text(message_text[lang]['offers'], reply_markup=offers_kb)
     await callback.answer('')
+    await state.clear()
 
 
 @main_rt.callback_query(F.data=="help")
