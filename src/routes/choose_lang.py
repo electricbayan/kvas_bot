@@ -5,7 +5,6 @@ from src.message_text import message_text
 from aiogram import F
 
 
-
 lang_rt = Router()
 
 @lang_rt.message(Command("start"))

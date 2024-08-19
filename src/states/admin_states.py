@@ -9,3 +9,4 @@ class AddAdmin(StatesGroup):
 class AddCreator(StatesGroup):
     nick_adding = State()
     nick_removing = State()
+    skills_adding = State()

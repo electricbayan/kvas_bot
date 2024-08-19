@@ -9,6 +9,7 @@ from src.middleware.users import InsertUserMiddleware
 from api.database.database import Database
 from src.setup_commands import commands
 from src.routes.admin_routes import admin_rt
+from src.routes.creator_routes import creator_rt
 
 
 logging.basicConfig(level=logging.INFO)
@@ -24,7 +25,7 @@ async def main():
     dp = Dispatcher()
     dp.callback_query.middleware(InsertUserMiddleware())
     dp.include_routers(
-        lang_rt, main_rt, admin_rt
+        lang_rt, main_rt, admin_rt, creator_rt
     )
 
     await dp.start_polling(bot)

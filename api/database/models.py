@@ -18,7 +18,8 @@ class User(Base):
 class Creator(Base):
     __tablename__ = "creators"
     tg_id: Mapped[str] = mapped_column(unique=True, primary_key=True)
-    load: Mapped[int]
+    skill: Mapped[str]
+    is_busy: Mapped[bool] = True
 
 
 class OrderType(Base):

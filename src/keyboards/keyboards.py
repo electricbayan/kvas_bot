@@ -2,10 +2,10 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 offers_kb = InlineKeyboardMarkup(inline_keyboard=[[
-    InlineKeyboardButton(text='Рисование', callback_data='drawing'),
-    InlineKeyboardButton(text='3D', callback_data='3d')],
-    [InlineKeyboardButton(text='Моды', callback_data='mods'),
-     InlineKeyboardButton(text='Ресурспаки', callback_data="resourses")],
+    InlineKeyboardButton(text='Рисование', callback_data='drawing_offer'),
+    InlineKeyboardButton(text='3D', callback_data='3d_offer')],
+    [InlineKeyboardButton(text='Моды', callback_data='mods_offer'),
+     InlineKeyboardButton(text='Ресурспаки', callback_data="resourses_offer")],
     [InlineKeyboardButton(text='Назад', callback_data='ru')
 ]])
 
@@ -42,3 +42,11 @@ admin_back_kb = InlineKeyboardMarkup(inline_keyboard=[
         InlineKeyboardButton(text='Назад', callback_data='ru')
     ]
 ])
+
+
+adding_skills_admin = InlineKeyboardMarkup(inline_keyboard=
+    [
+        [InlineKeyboardButton(text='Рисование', callback_data='drawing_skill'), InlineKeyboardButton(text='3D', callback_data='3d_skill')],
+        [InlineKeyboardButton(text='Моды', callback_data='mods_skill'), InlineKeyboardButton(text='Ресурспаки', callback_data='resourcepack_skill')]
+    ]
+)
