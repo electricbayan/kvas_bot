@@ -2,6 +2,7 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship, Relationship
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import ForeignKey
+from sqlalchemy.types import BigInteger
 
 
 
@@ -18,7 +19,7 @@ class User(Base):
 class Creator(Base):
     __tablename__ = "creators"
     tg_id: Mapped[str] = mapped_column(unique=True, primary_key=True)
-    is_busy: Mapped[bool] = True
+    is_busy: Mapped[bool]
 
 
 class SkillType(Base):
@@ -41,8 +42,9 @@ class Order(Base):
     customer_id: Mapped[int] = mapped_column(ForeignKey("users.tg_id"))
     order_type: Mapped[str]
     description: Mapped[str]
-    amount: Mapped[str]
+    amount: Mapped[int]
     is_payed: Mapped[bool] = False
+    token: Mapped[str]
 
 
 class Admin(Base):

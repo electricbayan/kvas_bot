@@ -59,7 +59,7 @@ class Database:
             skill_obj = await session.scalars(statement)
             skill_id = skill_obj.one().id
             if not creator:
-                creator_dataobj = Creator(tg_id=tg_id)
+                creator_dataobj = Creator(tg_id=tg_id, is_busy=True)
                 skillrelation_obj = CreatorSkillType(skilltype_id=skill_id, creator_id=creator_dataobj.tg_id)
                 session.add(creator_dataobj)
                 session.add(skillrelation_obj)
@@ -80,6 +80,30 @@ class Database:
                 await session.delete(creator)
                 await session.flush()
                 await session.commit()
+
+    @staticmethod
+    async def add_creator_to_order(creator_id: str, order_id: int):
+        pass
+
+    @staticmethod
+    async def is_user_creator(tg_id: str) -> bool:
+        async with session_factory() as session:
+            creator = await session.get(Creator, {'tg_id': tg_id})
+            return bool(creator)
+        
+    @staticmethod
+    async def is_creator_busy(tg_id: str) -> bool:
+        async with session_factory() as session:
+            creator = await session.get(Creator, {'tg_id': tg_id})
+            return bool(creator.is_busy)
+        
+    @staticmethod
+    async def change_creator_business(tg_id: str, business: bool):
+        async with session_factory() as session:
+            creator = await session.get(Creator, {'tg_id': tg_id})
+            creator.is_busy = business
+            await session.flush()
+            await session.commit()
 
     @staticmethod
     async def add_admin(tg_id: str) -> None:
@@ -110,6 +134,14 @@ class Database:
             session.add(dataobj)
             await session.flush()
             await session.commit()
+
+    @staticmethod
+    async def confirm_payment(customer_id: str):
+        pass
+
+    @staticmethod
+    async def get_confirmation_token() -> int:
+        pass
     
 
 async def main():

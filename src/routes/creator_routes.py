@@ -3,6 +3,7 @@ from aiogram.types import CallbackQuery, Message
 from src.message_text import message_text
 from api.database.database import Database
 from src.keyboards.keyboards import service_kb_admin, admin_back_kb, adding_skills_admin
+from src.keyboards.creator_keyboards import back_to_menu_kb
 from aiogram import F
 from os import getenv
 from src.states.admin_states import AddCreator
@@ -67,3 +68,15 @@ async def creator_removed(message: Message, state: FSMContext):
     await message.answer(message_text['ru']['greeting'], reply_markup=service_kb_admin)
     await state.clear()
 
+@creator_rt.callback_query(F.data == 'start_offers')
+async def start_offers(callback: CallbackQuery):
+    await callback.message.edit_text('Теперь вы принимаете заказы.', reply_markup=back_to_menu_kb)
+    await db.change_creator_business(str(callback.from_user.id), False)
+    await callback.answer('')
+
+
+@creator_rt.callback_query(F.data == 'stop_offers')
+async def start_offers(callback: CallbackQuery):
+    await callback.message.edit_text('Теперь вы не принимаете заказы.', reply_markup=back_to_menu_kb)
+    await db.change_creator_business(str(callback.from_user.id), True)
+    await callback.answer('')
