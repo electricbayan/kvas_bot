@@ -2,8 +2,6 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship, Relationship
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import ForeignKey
-from sqlalchemy.types import BigInteger
-
 
 
 class Base(DeclarativeBase):
@@ -50,3 +48,9 @@ class Order(Base):
 class Admin(Base):
     __tablename__ = "admins"
     tg_id: Mapped[str] = mapped_column(primary_key=True)
+
+
+class UniqueToken(Base):
+    __tablename__ = "token"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    last_value: Mapped[str]

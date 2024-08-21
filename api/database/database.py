@@ -1,9 +1,11 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy import text, select
+from sqlalchemy.exc import NoResultFound
+from sqlalchemy import text, select, and_
 from config import settings
-from api.database.models import Base, User, Admin, Creator, SkillType, CreatorSkillType, Order
+from api.database.models import Base, User, Admin, Creator, SkillType, CreatorSkillType, Order, UniqueToken
 import asyncio
 from src.exceptions import UserNotFound
+from random import randint
 
 
 engine = create_async_engine(
@@ -22,6 +24,8 @@ class Database:
             for ordertype in ('mods_skill', 'drawing_skill', '3d_skill', 'resources_skill'):
                 dataobj = SkillType(name=ordertype)
                 session.add(dataobj)
+            dataobj = UniqueToken(last_value = '3810920946')
+            session.add(dataobj)
             await session.flush()
             await session.commit()
 
@@ -46,6 +50,21 @@ class Database:
                 return user.lang
         except AttributeError:
             return "en"
+        
+    @staticmethod
+    async def get_token() -> None:
+        async with session_factory() as session:
+            statement = text("""SELECT last_value FROM token""")
+            res = await session.execute(statement)
+        return res.one()
+    
+    @staticmethod
+    async def update_token(new_value: str) -> None:
+        async with session_factory() as session:
+            tkn = await session.get(UniqueToken, {'id': 1})
+            tkn.last_value = new_value
+            await session.flush()
+            await session.commit()
     
     @staticmethod
     async def get_free_creator(work_type):
@@ -83,7 +102,11 @@ class Database:
 
     @staticmethod
     async def add_creator_to_order(creator_id: str, order_id: int):
-        pass
+        async with session_factory() as session:
+            order = await session.get(Order, {'id': id})
+            order.creator_id = creator_id
+            await session.flush()
+            await session.commit()
 
     @staticmethod
     async def is_user_creator(tg_id: str) -> bool:
@@ -128,20 +151,28 @@ class Database:
             
 
     @staticmethod
-    async def add_payment(customer_id: str, offer_type: str, description: str, amount: str):
+    async def add_payment(customer_id: str, offer_type: str, description: str, amount: str, token:str):
         async with session_factory() as session:
-            dataobj = Order(customer_id=customer_id, order_type=offer_type, description=description, amount=amount)
+            dataobj = Order(customer_id=customer_id, order_type=offer_type, description=description, amount=amount, token=token)
             session.add(dataobj)
             await session.flush()
             await session.commit()
 
-    @staticmethod
-    async def confirm_payment(customer_id: str):
-        pass
+    async def confirm_payment(self, token):
+        async with session_factory() as session:
+            stmt = select(Order).where(Order.token == token)
+            order = await session.execute(stmt)
+            order = next(order.scalars())
 
-    @staticmethod
-    async def get_confirmation_token() -> int:
-        pass
+            stmt = select(CreatorSkillType.creator_id).where(and_(CreatorSkillType.skilltype_id.in_(select(SkillType.id).where(SkillType.name.in_(select(Order.order_type).where(Order.token == token)))), CreatorSkillType.creator_id.in_(select(Creator.tg_id).where(Creator.is_busy==False))))
+            result = await session.execute(stmt)
+            try:
+                creator_id = result.one()
+                self.add_creator_to_order(creator_id=creator_id, order_id=order.id)
+                return order, creator_id
+            except NoResultFound:
+                return order, None
+    
     
 
 async def main():

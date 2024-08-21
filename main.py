@@ -16,19 +16,21 @@ from src.routes.payment_routes import payment_rt
 logging.basicConfig(level=logging.INFO)
 load_dotenv()
 bot = Bot(getenv("TG_TOKEN"))
-
+db = Database()
 async def main():
     logging.basicConfig(level=logging.INFO)
     await Database.create_tables()
     bot = Bot(getenv("TG_TOKEN"))
+
     await bot.set_my_commands(commands=commands)
 
     dp = Dispatcher()
     dp.callback_query.middleware(InsertUserMiddleware())
+    # dp.message.middleware(DeleteMessage())
+    # dp.callback_query(DeleteMessage())
     dp.include_routers(
         lang_rt, main_rt, admin_rt, creator_rt, payment_rt
     )
-
     await dp.start_polling(bot)
 
 
