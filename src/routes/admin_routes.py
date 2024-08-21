@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.types import CallbackQuery, Message
 from src.message_text import message_text
 from api.database.database import Database
-from src.keyboards.keyboards import service_kb_admin, admin_back_kb
+from src.keyboards.admin_kb import service_kb_admin, admin_back_kb
 from aiogram import F
 from os import getenv
 from src.states.admin_states import AddAdmin

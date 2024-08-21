@@ -2,8 +2,9 @@ from aiogram import Router
 from aiogram.types import CallbackQuery
 from src.message_text import message_text, languages
 from api.database.database import Database
-from src.keyboards.keyboards import service_kb, offers_kb, help_kb, service_kb_admin
+from src.keyboards.keyboards import service_kb, offers_kb, help_kb
 from src.keyboards.creator_keyboards import service_kb_creator, service_kb_creator_busy
+from src.keyboards.admin_kb import service_kb_admin
 from aiogram import F
 from aiogram.fsm.context import FSMContext
 from os import getenv

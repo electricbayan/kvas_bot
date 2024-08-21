@@ -5,6 +5,8 @@ from src.keyboards.payment_kb import payment_kb, payment_back_kb
 from aiogram import F
 from src.states.payment_states import PaymentState
 from aiogram.fsm.context import FSMContext
+from api.donalerts.token_creator import create_token
+from time import sleep
 
 
 payment_rt = Router()
@@ -23,8 +25,9 @@ async def get_payment_link(callback: CallbackQuery, state: FSMContext):
 
 @payment_rt.message(PaymentState.description)
 async def get_payment_link(message: Message, state: FSMContext):
-    await message.answer("""Перейдите по ссылке и оплатите заказ. Позже с вами свяжется исполнитель. ВАЖНО! вставьте в текст сообщения следующий код:\n\nПример на картинке""", reply_markup=payment_kb)
-    
+    token = await create_token()
+    await message.answer(f"""Перейдите по ссылке и оплатите заказ. Позже с вами свяжется исполнитель. \nВАЖНО!\nВставьте в текст сообщения ID своего заказа: \n{token}""", reply_markup=payment_kb)
     userdata = await state.get_data()
-    await db.add_payment(str(message.from_user.id), userdata['offer_type'], message.text, amount=0)
+    await db.add_payment(customer_id=str(message.from_user.id), offer_type=userdata['offer_type'], description=message.text, amount=0, token=token)
+    # print(creator_id, user_id)
     await state.clear()

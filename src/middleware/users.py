@@ -12,4 +12,5 @@ class InsertUserMiddleware(BaseMiddleware):
         elif event.data == "en":
             await self.db.insert_user(tg_id=str(event.from_user.id), lang="en")
 
+        
         await handler(event, data)

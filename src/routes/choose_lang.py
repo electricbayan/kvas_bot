@@ -10,6 +10,7 @@ lang_rt = Router()
 @lang_rt.message(Command("start"))
 async def choose_language_message(message: types.Message):
     await message.answer(message_text['choose_language'], reply_markup=lang_kb)
+    print(message.message_id)
     await message.delete()
 
 
