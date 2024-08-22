@@ -21,8 +21,8 @@ class Database:
             await con.run_sync(Base.metadata.drop_all)
             await con.run_sync(Base.metadata.create_all)
         async with session_factory() as session:
-            for ordertype in ('mods_skill', 'drawing_skill', '3d_skill', 'resources_skill'):
-                dataobj = SkillType(name=ordertype)
+            for ordertype, price in zip(('mods_skill', 'drawing_skill', '3d_skill', 'resources_skill'), (20, 10, 20, 20)):
+                dataobj = SkillType(name=ordertype, price=price)
                 session.add(dataobj)
             dataobj = UniqueToken(last_value = '3810920946')
             session.add(dataobj)
@@ -65,10 +65,6 @@ class Database:
             tkn.last_value = new_value
             await session.flush()
             await session.commit()
-    
-    @staticmethod
-    async def get_free_creator(work_type):
-        pass
 
     @staticmethod
     async def add_creator(tg_id: str, skill: str) -> None:
@@ -125,8 +121,25 @@ class Database:
         async with session_factory() as session:
             creator = await session.get(Creator, {'tg_id': tg_id})
             creator.is_busy = business
+            if not business:
+                # ДОПИСАТЬ stmt
+                stmt = select(Order).where(and_(Order.creator_id is None, Order.order_type.in_(select(SkillType.name).where())))
             await session.flush()
             await session.commit()
+
+    @staticmethod
+    async def get_creator_offers(tg_id: str):
+        async with session_factory() as session:
+            print(tg_id)
+            stmt = select(Order).where(Order.creator_id == tg_id)
+            orders = await session.execute(stmt)
+            order_list = []
+            orders = orders.scalars().all()
+            print(orders)
+            for order in orders:
+                order_list.append(order)
+            return order_list
+
 
     @staticmethod
     async def add_admin(tg_id: str) -> None:
@@ -160,6 +173,9 @@ class Database:
 
     async def confirm_payment(self, token):
         async with session_factory() as session:
+            stmt = select(SkillType.price).where(SkillType.name.in_(select(Order.order_type).where(Order.token == token)))
+            price = await session.execute(stmt)
+            price = price.scalars().one()
             stmt = select(Order).where(Order.token == token)
             order = await session.execute(stmt)
             order = next(order.scalars())
@@ -169,9 +185,9 @@ class Database:
             try:
                 creator_id = result.one()
                 self.add_creator_to_order(creator_id=creator_id, order_id=order.id)
-                return order, creator_id
+                return order, creator_id, price
             except NoResultFound:
-                return order, None
+                return order, None, price
     
     
 

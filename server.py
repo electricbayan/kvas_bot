@@ -51,9 +51,17 @@ async def login(code: str):
     fugo = Centrifugo(socket_token, access_token, user_id)
     event = fugo.subscribe(Channels.NEW_DONATION_ALERTS)
     purchase_token = event.message
-    print(purchase_token)
-    order, creator_id = await db.confirm_payment(purchase_token)
-    await bot.send_message(order.customer_id, 'Заказ принят!')
-    await bot.send_message(int(creator_id), f'Поступил заказ: {order.description}')
+    print(f'{purchase_token=}')
+    order, creator_id, price = await db.confirm_payment(purchase_token)
+    print(f'{creator_id=}')
+    print(f'{price=}')
+    if float(event.amount) >= float(price):
+        if creator_id:
+            await bot.send_message(order.customer_id, f'Заказ принят!\nID: {purchase_token}')
+            await bot.send_message(int(creator_id), f'Поступил заказ: {order.description}')
+        else:
+            await bot.send_message(order.customer_id, f'Заказ оплачен. Как только наши специалисты освободятся, мы вам напишем\nID: {purchase_token}')
+    else:
+        await bot.send_message(order.customer_id, f'Неверная сумма оплаты. Обратитесь в техподдержку.\nID: {purchase_token}')
 
     return RedirectResponse("/")

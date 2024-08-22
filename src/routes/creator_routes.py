@@ -80,3 +80,13 @@ async def start_offers(callback: CallbackQuery):
     await callback.message.edit_text('Теперь вы не принимаете заказы.', reply_markup=back_to_menu_kb)
     await db.change_creator_business(str(callback.from_user.id), True)
     await callback.answer('')
+
+@creator_rt.callback_query(F.data=='my_offers')
+async def my_offers_list(callback: CallbackQuery):
+    offers_list = await db.get_creator_offers(str(callback.from_user.id))
+    msg_text = 'Ваши заказы:\n'
+    for num, offer in zip(range(1, 100), offers_list):
+        msg_text += f'{num}. {offer.description}\n'
+
+    await callback.answer('')
+    await callback.message.edit_text(msg_text, reply_markup=back_to_menu_kb)

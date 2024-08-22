@@ -1,5 +1,5 @@
 # from sqlalchemy import MetaData
-from sqlalchemy.orm import Mapped, mapped_column, relationship, Relationship
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import ForeignKey
 
@@ -24,6 +24,7 @@ class SkillType(Base):
     __tablename__ = "skilltypes"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
+    price: Mapped[int]
 
 
 class CreatorSkillType(Base):
