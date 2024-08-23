@@ -3,8 +3,10 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 service_kb_admin = InlineKeyboardMarkup(inline_keyboard=[[
     InlineKeyboardButton(text='Услуги', callback_data='offers'),
-    InlineKeyboardButton(text='Курсы', callback_data='courses')],
-    [InlineKeyboardButton(text='Доступ серв', callback_data='access'),
+    # InlineKeyboardButton(text='Курсы', callback_data='courses')
+    ],
+    [
+        # InlineKeyboardButton(text='Доступ серв', callback_data='access'),
     InlineKeyboardButton(text='Помощь', callback_data='help')],
     [InlineKeyboardButton(text='Добавить админа', callback_data="add_admin"), 
      InlineKeyboardButton(text="Добавить исполнителя", callback_data="add_creator")],

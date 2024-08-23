@@ -58,7 +58,7 @@ async def login(code: str):
     if float(event.amount) >= float(price):
         if creator_id:
             await bot.send_message(order.customer_id, f'Заказ принят!\nID: {purchase_token}')
-            await bot.send_message(int(creator_id), f'Поступил заказ: {order.description}')
+            await bot.send_message(int(creator_id[0]), f'Поступил заказ: {order.description}')
         else:
             await bot.send_message(order.customer_id, f'Заказ оплачен. Как только наши специалисты освободятся, мы вам напишем\nID: {purchase_token}')
     else:

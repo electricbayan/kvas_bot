@@ -5,3 +5,7 @@ class PaymentState(StatesGroup):
     tg_id = State()
     offer_type = State()
     description = State()
+
+
+class ChangeTextState(StatesGroup):
+    token = State()

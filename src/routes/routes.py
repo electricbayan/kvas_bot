@@ -46,3 +46,8 @@ async def get_help(callback: CallbackQuery):
     await callback.answer('')
 
 
+@main_rt.callback_query(F.data=="design")
+async def get_help(callback: CallbackQuery):
+    # lang = await db.get_language(callback.from_user.id)
+    # await callback.message.edit_text(message_text[lang]['help'], reply_markup=help_kb)
+    await callback.answer('')

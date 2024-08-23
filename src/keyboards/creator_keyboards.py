@@ -3,8 +3,10 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 service_kb_creator = InlineKeyboardMarkup(inline_keyboard=[[
     InlineKeyboardButton(text='Услуги', callback_data='offers'),
-    InlineKeyboardButton(text='Курсы', callback_data='courses')],
-    [InlineKeyboardButton(text='Доступ серв', callback_data='access'),
+    # InlineKeyboardButton(text='Курсы', callback_data='courses')
+    ],
+    [
+        # InlineKeyboardButton(text='Доступ серв', callback_data='access'),
     InlineKeyboardButton(text='Помощь', callback_data='help')],
      [InlineKeyboardButton(text='Мои заказы', callback_data='my_offers'),
       InlineKeyboardButton(text='Остановить приём заказов', callback_data='stop_offers')],
@@ -14,8 +16,10 @@ service_kb_creator = InlineKeyboardMarkup(inline_keyboard=[[
 
 service_kb_creator_busy = InlineKeyboardMarkup(inline_keyboard=[[
     InlineKeyboardButton(text='Услуги', callback_data='offers'),
-    InlineKeyboardButton(text='Курсы', callback_data='courses')],
-    [InlineKeyboardButton(text='Доступ серв', callback_data='access'),
+    # InlineKeyboardButton(text='Курсы', callback_data='courses')
+    ],
+    [
+        # InlineKeyboardButton(text='Доступ серв', callback_data='access'),
     InlineKeyboardButton(text='Помощь', callback_data='help')],
      [InlineKeyboardButton(text='Мои заказы', callback_data='my_offers'),
       InlineKeyboardButton(text='Начать приём заказов', callback_data='start_offers')],
