@@ -41,7 +41,6 @@ class Order(Base):
     customer_id: Mapped[int] = mapped_column(ForeignKey("users.tg_id"))
     order_type: Mapped[str]
     description: Mapped[str]
-    amount: Mapped[int]
     is_payed: Mapped[bool] = False
     token: Mapped[str]
 

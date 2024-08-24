@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.types import CallbackQuery, Message
 from src.message_text import message_text
 from api.database.database import Database
-from src.keyboards.admin_kb import service_kb_admin, admin_back_kb
+from src.keyboards.admin_kb import main_menu_kb_admin, admin_back_kb
 from aiogram import F
 from os import getenv
 from src.states.admin_states import AddAdmin
@@ -35,7 +35,7 @@ async def admin_added(message: Message, state: FSMContext):
         userid = await resolve_username_to_channel_id(message.text.strip())
         await db.add_admin(str(userid))
         await message.answer('Успешно.')
-        await message.answer(message_text['ru']['greeting'], reply_markup=service_kb_admin)
+        await message.answer(message_text['ru']['greeting'], reply_markup=main_menu_kb_admin)
     except (UsernameInvalid, UsernameNotOccupied):
         await message.answer('Неверное имя пользователя')
     await state.clear()
@@ -52,5 +52,5 @@ async def admin_removed(message: Message, state: FSMContext):
         await message.answer('Неверное имя пользователя')
     except UserNotFound:
         await message.answer('Пользователь не найден')
-    await message.answer(message_text['ru']['greeting'], reply_markup=service_kb_admin)
+    await message.answer(message_text['ru']['greeting'], reply_markup=main_menu_kb_admin)
     await state.clear()

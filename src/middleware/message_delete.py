@@ -16,25 +16,19 @@ class DeleteMessage(BaseMiddleware):
 
         is_delete_msg = False
         
-        if await data['state'].get_state() == PaymentState.description:
-            # message_to_delete = Message(message_id=self.menu_message_id, chat=self.chat_id)
-            # message_to_delete.delete()
-            await bot.delete_message(message_id=self.menu_message_id, chat_id=self.chat_id)
-            is_delete_msg = True
 
         msg_id = await handler(event, data)
         chat_id = data['event_context'].chat.id
         if is_delete_msg:
             self.menu_message_id = msg_id
             self.chat_id = chat_id
-
-
-        # print('STATE:', await data['state'].get_state())
         
 
         if event.text == '/start':
-            if self.chat_id and self.menu_message_id:
-                await bot.delete_message(message_id=self.menu_message_id, chat_id=self.chat_id)
+            self.menu_message_id = msg_id
+            self.chat_id = chat_id
+        else:
+            await bot.delete_message(message_id=self.menu_message_id, chat_id=self.chat_id)
             self.menu_message_id = msg_id
             self.chat_id = chat_id
 

@@ -21,8 +21,10 @@ class Database:
             await con.run_sync(Base.metadata.drop_all)
             await con.run_sync(Base.metadata.create_all)
         async with session_factory() as session:
-            for ordertype, price in zip(('mods_skill', 'drawing_skill', '3d_skill', 'resources_skill'), (20, 10, 20, 20)):
-                dataobj = SkillType(name=ordertype, price=price)
+            skilltypes = ('vanil_skin', 'pastel_skin', 'building_location', 'single_building', '2d_totem', '3d_totem', 'custom_totem', 'art_with_background', 'art_without_background', 'mob', 'item', 'mod')
+            prices = [10] * 11
+            for ordertype, price in zip(skilltypes, prices):
+                dataobj = SkillType(name=ordertype + "_skill", price=price)
                 session.add(dataobj)
             dataobj = UniqueToken(last_value = '3810920946')
             session.add(dataobj)
@@ -78,6 +80,11 @@ class Database:
                 skillrelation_obj = CreatorSkillType(skilltype_id=skill_id, creator_id=creator_dataobj.tg_id)
                 session.add(creator_dataobj)
                 session.add(skillrelation_obj)
+            else:
+                skillrelation_obj = CreatorSkillType(skilltype_id=skill_id, creator_id=creator.tg_id)
+                session.add(skillrelation_obj)
+
+
             await session.flush()
             await session.commit()
 
@@ -164,9 +171,9 @@ class Database:
             
 
     @staticmethod
-    async def add_payment(customer_id: str, offer_type: str, description: str, amount: str, token:str):
+    async def add_payment(customer_id: str, offer_type: str, description: str, token:str):
         async with session_factory() as session:
-            dataobj = Order(customer_id=customer_id, order_type=offer_type, description=description, amount=amount, token=token)
+            dataobj = Order(customer_id=customer_id, order_type=offer_type, description=description, token=token)
             session.add(dataobj)
             await session.flush()
             await session.commit()

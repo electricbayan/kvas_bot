@@ -5,7 +5,12 @@
         "offers": "Услуги в какой обсти вас интересуют",
         "help": "Чем помочь",
         "courses": "",
-        "servers": ""
+        "servers": "",
+        "skin_menu": "Скины",
+        "building_menu": "Строительство",
+        "totem_menu": "Тотемы",
+        "3d_menu": "3D",
+        "art_menu": "Арты"
         },
     "en":
         {"greeting": "Greeting",
