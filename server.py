@@ -1,10 +1,10 @@
-from donationalerts import DonationAlertsAPI, Centrifugo, Scopes, Channels
-from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+import json
+import socketio
 from os import getenv
 from pyrogram.client import Client
 from api.database.database import Database
 from main import bot
+import asyncio
 
 
 class WrongNickname(Exception):
@@ -25,37 +25,24 @@ def resolve_username_to_channel_id(username: str) -> int | None:
         res = app.get_users(username)
     return res.id
 
-
-app = FastAPI()
 db = Database()
-
-
+sio = socketio.AsyncClient()
 client_id = getenv('DA_ID')
 client_secret=getenv("DA_TOKEN")
-redirect_uri='http://127.0.0.1:8090/login'
-api = DonationAlertsAPI(
-    client_id, client_secret, redirect_uri, [Scopes.DONATION_SUBSCRIBE, Scopes.USER_SHOW]
-)
 
+@sio.on('connect')
+async def connect():
+    print('connection established')
+    await sio.emit('add-user', {'token': 'Sm51ybwsZLyUCNJcrQUC', "type": "alert_widget"})
 
-@app.get('/')
-async def index():
-    return RedirectResponse(api.login())
-
-@app.get('/login')
-async def login(code: str):
-    access_token = api.get_access_token(code)
-    user = api.user(access_token)
-    socket_token = user.socket_connection_token
-    user_id = user.id
-    fugo = Centrifugo(socket_token, access_token, user_id)
-    event = fugo.subscribe(Channels.NEW_DONATION_ALERTS)
-    purchase_token = event.message
-    print(f'{purchase_token=}')
+@sio.event
+async def donation(data):
+    data = json.loads(data)
+    purchase_token = data['message']
+    amount = data['amount']
     order, creator_id, price = await db.confirm_payment(purchase_token)
-    print(f'{creator_id=}')
-    print(f'{price=}')
-    if float(event.amount) >= float(price):
+
+    if float(amount) >= float(price):
         if creator_id:
             await bot.send_message(order.customer_id, f'Заказ принят!\nID: {purchase_token}')
             await bot.send_message(int(creator_id[0]), f'Поступил заказ: {order.description}')
@@ -64,4 +51,13 @@ async def login(code: str):
     else:
         await bot.send_message(order.customer_id, f'Неверная сумма оплаты. Обратитесь в техподдержку.\nID: {purchase_token}')
 
-    return RedirectResponse("/")
+@sio.event
+async def disconnect():
+    print('disconnected from server')
+
+async def main():
+    await sio.connect('wss://socket.donationalerts.ru:443', transports='websocket')
+    await sio.wait()
+
+if __name__ == "__main__":
+    asyncio.run(main())
