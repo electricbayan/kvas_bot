@@ -14,8 +14,9 @@ offers_kb = InlineKeyboardMarkup(inline_keyboard=[[
 main_menu_kb = InlineKeyboardMarkup(inline_keyboard=[[
     InlineKeyboardButton(text='Услуги майнкрафт', callback_data='offers'),
     InlineKeyboardButton(text='Дизайн', callback_data='design')],
-    [InlineKeyboardButton(text='Помощь', callback_data='help')],
-    [InlineKeyboardButton(text="Смена языка", callback_data="choose_lang")
+    [InlineKeyboardButton(text='Мои заказы', callback_data='my_orders')],
+    [InlineKeyboardButton(text='Помощь', callback_data='help'), 
+     InlineKeyboardButton(text="Смена языка", callback_data="choose_lang")
 ]])
 
 skin_kb = InlineKeyboardMarkup(inline_keyboard=[

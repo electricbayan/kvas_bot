@@ -137,12 +137,21 @@ class Database:
     @staticmethod
     async def get_creator_offers(tg_id: str):
         async with session_factory() as session:
-            print(tg_id)
             stmt = select(Order).where(Order.creator_id == tg_id)
             orders = await session.execute(stmt)
             order_list = []
             orders = orders.scalars().all()
-            print(orders)
+            for order in orders:
+                order_list.append(order)
+            return order_list
+        
+    @staticmethod
+    async def get_user_orders(tg_id: str):
+        async with session_factory() as session:
+            stmt = select(Order).where(Order.customer_id == tg_id)
+            orders = await session.execute(stmt)
+            order_list = []
+            orders = orders.scalars().all()
             for order in orders:
                 order_list.append(order)
             return order_list
@@ -191,7 +200,7 @@ class Database:
             result = await session.execute(stmt)
             try:
                 creator_id = result.one()
-                self.add_creator_to_order(creator_id=creator_id, order_id=order.id)
+                await self.add_creator_to_order(creator_id=creator_id, order_id=order.id)
                 return order, creator_id, price
             except NoResultFound:
                 return order, None, price

@@ -6,6 +6,7 @@ main_menu_kb_admin = InlineKeyboardMarkup(inline_keyboard=[[
     InlineKeyboardButton(text='Дизайн', callback_data='design')],
     [InlineKeyboardButton(text="Добавить исполнителя", callback_data="add_creator"),
      InlineKeyboardButton(text='Удалить исполнителя', callback_data='remove_creator')],
+    [InlineKeyboardButton(text='Мои заказы', callback_data='my_orders')],
     [InlineKeyboardButton(text='Помощь', callback_data='help'),
     InlineKeyboardButton(text="Смена языка", callback_data="choose_lang")
 ]])

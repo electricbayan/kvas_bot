@@ -26,7 +26,7 @@ def resolve_username_to_channel_id(username: str) -> int | None:
     return res.id
 
 db = Database()
-sio = socketio.AsyncClient()
+sio = socketio.AsyncClient(reconnection=True)
 client_id = getenv('DA_ID')
 client_secret=getenv("DA_TOKEN")
 
@@ -56,8 +56,9 @@ async def disconnect():
     print('disconnected from server')
 
 async def main():
-    await sio.connect('wss://socket.donationalerts.ru:443', transports='websocket')
-    await sio.wait()
+    await sio.connect('wss://socket.donationalerts.ru:443', transports='websocket', wait_timeout=60)
+    while True:
+        await sio.wait()
 
 if __name__ == "__main__":
     asyncio.run(main())

@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.types import CallbackQuery
 from src.message_text import message_text, languages
 from api.database.database import Database
-from src.keyboards.keyboards import main_menu_kb, offers_kb, help_kb, skin_kb, building_kb, totem_kb, art_kb, three_dim_kb
+from src.keyboards.keyboards import main_menu_kb, offers_kb, help_kb, skin_kb, building_kb, totem_kb, art_kb, three_dim_kb, back_to_main_menu
 from src.keyboards.creator_keyboards import main_menu_kb_creator_busy, main_menu_kb_creator
 from src.keyboards.admin_kb import main_menu_kb_admin
 from aiogram import F
@@ -83,4 +83,15 @@ async def get_help(callback: CallbackQuery):
 async def design(callback: CallbackQuery):
     # lang = await db.get_language(callback.from_user.id)
     # await callback.message.edit_text(message_text[lang]['help'], reply_markup=help_kb)
+    await callback.answer('')
+
+@main_rt.callback_query(F.data == 'my_orders')
+async def my_orders(callback: CallbackQuery):
+    orders = await db.get_user_orders(str(callback.from_user.id))
+
+    msg_text = 'Ваши заказы:\n'
+    for num, offer in zip(range(1, 100), orders):
+        msg_text += f'{num}. {offer.description}\nID: {offer.token}\n'
+
+    await callback.message.edit_text(msg_text, reply_markup=back_to_main_menu)
     await callback.answer('')
