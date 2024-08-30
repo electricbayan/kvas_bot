@@ -15,6 +15,7 @@ main_menu_kb = InlineKeyboardMarkup(inline_keyboard=[[
     InlineKeyboardButton(text='Услуги майнкрафт', callback_data='offers'),
     InlineKeyboardButton(text='Дизайн', callback_data='design')],
     [InlineKeyboardButton(text='Мои заказы', callback_data='my_orders')],
+    [InlineKeyboardButton(text='Работа у нас', callback_data='work')],
     [InlineKeyboardButton(text='Помощь', callback_data='help'), 
      InlineKeyboardButton(text="Смена языка", callback_data="choose_lang")
 ]])
@@ -59,4 +60,10 @@ help_kb = InlineKeyboardMarkup(inline_keyboard=[[
 
 back_to_main_menu = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Назад', callback_data='ru')]
+])
+
+design_kb = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Лого', callback_data='logo_skill'),
+     InlineKeyboardButton(text='Оформление', callback_data='registration_skill')],
+     [InlineKeyboardButton(text='Назад', callback_data='ru')]
 ])

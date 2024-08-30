@@ -3,7 +3,6 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy import text, select, and_
 from config import settings
 from api.database.models import Base, User, Admin, Creator, SkillType, CreatorSkillType, Order, UniqueToken
-import asyncio
 from src.exceptions import UserNotFound
 from random import randint
 
@@ -13,6 +12,23 @@ engine = create_async_engine(
 )
 session_factory = async_sessionmaker(engine)
 
+prices = {
+    'mod_skill': 10,
+    'vanil_skin_skill': 10,
+    'pastel_skin_skill': 10,
+    'building_location_skill': 10,
+    'single_building_skill': 10,
+    '2d_totem_skill': 10,
+    '3d_totem_skill': 10,
+    'custom_totem_skill': 10,
+    'art_with_background_skill': 10,
+    'art_without_background_skill': 10,
+    'mob_skill': 10,
+    'item_skill': 10,
+    'logo_skill': 10,
+    'registration_skill': 10
+}
+
 
 class Database:
     @staticmethod
@@ -21,10 +37,8 @@ class Database:
             await con.run_sync(Base.metadata.drop_all)
             await con.run_sync(Base.metadata.create_all)
         async with session_factory() as session:
-            skilltypes = ('vanil_skin', 'pastel_skin', 'building_location', 'single_building', '2d_totem', '3d_totem', 'custom_totem', 'art_with_background', 'art_without_background', 'mob', 'item', 'mod')
-            prices = [10] * 11
-            for ordertype, price in zip(skilltypes, prices):
-                dataobj = SkillType(name=ordertype + "_skill", price=price)
+            for ordertype in prices.keys():
+                dataobj = SkillType(name=ordertype, price=prices[ordertype])
                 session.add(dataobj)
             dataobj = UniqueToken(last_value = '3810920946')
             session.add(dataobj)
@@ -33,11 +47,11 @@ class Database:
 
             
     @staticmethod
-    async def insert_user(tg_id: str, lang="ru") -> None:
+    async def insert_user(tg_id: str, lang="ru", url=None) -> None:
         async with session_factory() as session:
             user = await session.get(User, {'tg_id': tg_id})
             if not user:
-                dataobj = User(tg_id=tg_id, lang=lang)
+                dataobj = User(tg_id=tg_id, lang=lang, url=url)
                 session.add(dataobj)
             else:
                 user.lang=lang
@@ -69,14 +83,15 @@ class Database:
             await session.commit()
 
     @staticmethod
-    async def add_creator(tg_id: str, skill: str) -> None:
+    async def add_creator(tg_id: str, username: str, skill: str) -> None:
         async with session_factory() as session:
             creator = await session.get(Creator, {'tg_id': tg_id})
             statement = select(SkillType).filter_by(name=skill)
+            print(f'{skill=}')
             skill_obj = await session.scalars(statement)
             skill_id = skill_obj.one().id
             if not creator:
-                creator_dataobj = Creator(tg_id=tg_id, is_busy=True)
+                creator_dataobj = Creator(tg_id=tg_id, is_busy=True, username=username)
                 skillrelation_obj = CreatorSkillType(skilltype_id=skill_id, creator_id=creator_dataobj.tg_id)
                 session.add(creator_dataobj)
                 session.add(skillrelation_obj)
@@ -106,8 +121,9 @@ class Database:
     @staticmethod
     async def add_creator_to_order(creator_id: str, order_id: int):
         async with session_factory() as session:
-            order = await session.get(Order, {'id': id})
+            order = await session.get(Order, {'id': order_id})
             order.creator_id = creator_id
+            order.is_payed = True
             await session.flush()
             await session.commit()
 
@@ -123,16 +139,21 @@ class Database:
             creator = await session.get(Creator, {'tg_id': tg_id})
             return bool(creator.is_busy)
         
-    @staticmethod
-    async def change_creator_business(tg_id: str, business: bool):
+    async def change_creator_business(self, tg_id: str, business: bool) -> dict:
         async with session_factory() as session:
             creator = await session.get(Creator, {'tg_id': tg_id})
             creator.is_busy = business
+            order_id = None
             if not business:
-                # ДОПИСАТЬ stmt
-                stmt = select(Order).where(and_(Order.creator_id is None, Order.order_type.in_(select(SkillType.name).where())))
+                stmt = select(Order).where(and_(Order.is_payed==True, Order.order_type==select(SkillType.name).where(SkillType.id.in_(select(CreatorSkillType.skilltype_id).where(CreatorSkillType.creator_id==creator.tg_id)))))
+                orders = await session.execute(stmt)
+                if orders.scalar():
+                    order = orders.scalars().one()
+                    order_id = order.id
+                    await self.add_creator_to_order(str(tg_id), order.id)
             await session.flush()
             await session.commit()
+            return order_id
 
     @staticmethod
     async def get_creator_offers(tg_id: str):
@@ -155,6 +176,12 @@ class Database:
             for order in orders:
                 order_list.append(order)
             return order_list
+        
+    @staticmethod
+    async def get_order(order_id: int) -> Order:
+        async with session_factory() as session:
+            order = await session.get(Order, {'id': order_id})
+        return order
 
 
     @staticmethod
@@ -192,26 +219,52 @@ class Database:
             stmt = select(SkillType.price).where(SkillType.name.in_(select(Order.order_type).where(Order.token == token)))
             price = await session.execute(stmt)
             price = price.scalars().one()
+
             stmt = select(Order).where(Order.token == token)
             order = await session.execute(stmt)
-            order = next(order.scalars())
+            order = order.scalars().one()
 
             stmt = select(CreatorSkillType.creator_id).where(and_(CreatorSkillType.skilltype_id.in_(select(SkillType.id).where(SkillType.name.in_(select(Order.order_type).where(Order.token == token)))), CreatorSkillType.creator_id.in_(select(Creator.tg_id).where(Creator.is_busy==False))))
             result = await session.execute(stmt)
             try:
-                creator_id = result.one()
+                creator_id = result.scalar()
+                stmt = select(Creator.username).where(Creator.tg_id==creator_id)
+                creator_username = await session.execute(stmt)
+                creator_username = creator_username.scalar()
                 await self.add_creator_to_order(creator_id=creator_id, order_id=order.id)
-                return order, creator_id, price
+                return order, creator_id, price, creator_username
             except NoResultFound:
-                return order, None, price
-    
-    
+                await self.set_payed_status(True, order.id)
+                return order, None, price, None
+        
+    @staticmethod
+    async def set_payed_status(status, order_id):
+        async with session_factory() as session:
+            order = await session.get(Order, {'id': order_id})
+            order.is_payed = True
+            await session.flush()
+            await session.commit()
 
-async def main():
-    async with engine.connect() as con:
-        res = await con.execute(text("SELECT * FROM users"))
-        print(res.fetchone())
+    @staticmethod
+    async def get_profit() -> dict:
+        async with session_factory() as session:
+            stmt = select(Creator.tg_id)
+            creators_id = await session.execute(stmt)
+            creators_id = creators_id.scalars().all()
 
+            creators_profit = {}
+            print(creators_id)
+            for creator_id in creators_id:
+                stmt = select(Order.order_type).where(Order.creator_id==creator_id)
+                ordertype = await session.execute(stmt)
+                price = prices[ordertype.scalar()]
 
-if __name__ == "__main__":
-    asyncio.run(main())
+                stmt = select(Creator.username).where(Creator.tg_id==creator_id)
+                userid = await session.execute(stmt)
+                userid = userid.scalar()
+
+                if userid in creators_profit.keys():
+                    creators_profit[userid] += price
+                else:
+                    creators_profit[userid] = price
+            return creators_profit

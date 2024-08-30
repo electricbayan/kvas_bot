@@ -9,6 +9,7 @@ from src.states.admin_states import AddAdmin
 from aiogram.fsm.context import FSMContext
 from pyrogram.errors.exceptions.bad_request_400 import UsernameInvalid, UsernameNotOccupied
 from api.database.database import UserNotFound
+from aiogram.filters import Command
 from src.telegram_functions import resolve_username_to_channel_id
 
 
@@ -18,7 +19,7 @@ db = Database()
 
 @admin_rt.callback_query(F.data.in_(('add_admin', 'remove_admin')))
 async def add_admin(callback: CallbackQuery, state: FSMContext):
-    await callback.message.edit_text("Введите ник пользователя (через @)", reply_markup=admin_back_kb)
+    await callback.message.edit_caption(caption="Введите ник пользователя (через @)", reply_markup=admin_back_kb)
     if str(callback.from_user.id) in getenv("ADMINS_ID"):
         if callback.data == 'add_admin':
             await state.set_state(AddAdmin.nick_adding)
@@ -54,3 +55,13 @@ async def admin_removed(message: Message, state: FSMContext):
         await message.answer('Пользователь не найден')
     await message.answer(message_text['ru']['greeting'], reply_markup=main_menu_kb_admin)
     await state.clear()
+
+@admin_rt.message(Command('profit'))
+async def get_profit(message: Message):
+    if str(message.from_user.id) in getenv("ADMINS_ID"):
+        creators_profit = await db.get_profit()
+        final_message=''
+        for orderid, creator_id in enumerate(creators_profit.keys()):
+            final_message += f'{orderid}. {creator_id}: {creators_profit[creator_id]}\n'
+        await message.answer(final_message)
+            

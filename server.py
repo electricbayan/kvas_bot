@@ -11,20 +11,6 @@ class WrongNickname(Exception):
     pass
 
 
-def resolve_username_to_channel_id(username: str) -> int | None:
-    if username[0] != '@':
-        raise WrongNickname
-    pyrogram_client = Client(
-    "bot",
-    api_id=getenv("API_ID"),
-    api_hash=getenv("API_HASH"),
-    bot_token=getenv("TG_TOKEN"),
-    )
-    username=username[1:]
-    with pyrogram_client as app:
-        res = app.get_users(username)
-    return res.id
-
 db = Database()
 sio = socketio.AsyncClient(reconnection=True)
 client_id = getenv('DA_ID')
@@ -40,12 +26,12 @@ async def donation(data):
     data = json.loads(data)
     purchase_token = data['message']
     amount = data['amount']
-    order, creator_id, price = await db.confirm_payment(purchase_token)
+    order, creator_id, price, creator_username = await db.confirm_payment(purchase_token)
 
     if float(amount) >= float(price):
         if creator_id:
-            await bot.send_message(order.customer_id, f'Заказ принят!\nID: {purchase_token}')
-            await bot.send_message(int(creator_id[0]), f'Поступил заказ: {order.description}')
+            await bot.send_message(order.customer_id, f'Заказ принят! TG исполнителя: {creator_username}\nID: {purchase_token}, вид заказа: {order.order_type}')
+            await bot.send_message(int(creator_id), f'Поступил заказ: {order.description}, ссылка на заказчика: "tg://openmessage?user_id={order.customer_id}". Тип заказа: {order.order_type}')
         else:
             await bot.send_message(order.customer_id, f'Заказ оплачен. Как только наши специалисты освободятся, мы вам напишем\nID: {purchase_token}')
     else:

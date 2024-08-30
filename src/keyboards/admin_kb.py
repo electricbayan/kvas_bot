@@ -23,6 +23,7 @@ adding_skills_admin = InlineKeyboardMarkup(inline_keyboard=
         [InlineKeyboardButton(text='Скины', callback_data='skin_skill'), InlineKeyboardButton(text='3D', callback_data='3d_skill')],
         [InlineKeyboardButton(text='Моды', callback_data='mod_skill'), InlineKeyboardButton(text='Постройка', callback_data='building_skill')],
         [InlineKeyboardButton(text='Тотем3D', callback_data='totem3d_skill'), InlineKeyboardButton(text='Тотем2D', callback_data='totem2d_skill')],
-        [InlineKeyboardButton(text='Арт', callback_data='art_skill')]
+        [InlineKeyboardButton(text='Арт', callback_data='art_skill'), InlineKeyboardButton(text='Лого', callback_data='logo_skill')],
+        [InlineKeyboardButton(text='Оформление', callback_data='registration_skill')]
     ]
 )
