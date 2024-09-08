@@ -15,7 +15,7 @@ from src.telegram_functions import resolve_username_to_channel_id
 
 admin_rt = Router()
 db = Database()
-        
+
 
 @admin_rt.callback_query(F.data.in_(('add_admin', 'remove_admin')))
 async def add_admin(callback: CallbackQuery, state: FSMContext):

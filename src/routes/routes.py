@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.types import CallbackQuery
 from src.message_text import message_text, languages
 from api.database.database import Database
-from src.keyboards.keyboards import main_menu_kb, offers_kb, help_kb, skin_kb, building_kb, totem_kb, art_kb, three_dim_kb, back_to_main_menu, design_kb
+from src.keyboards.keyboards import main_menu_kb, offers_kb, skin_kb, building_kb, totem_kb, art_kb, three_dim_kb, back_to_main_menu, design_kb, mod_kb
 from src.keyboards.creator_keyboards import main_menu_kb_creator_busy, main_menu_kb_creator
 from src.keyboards.admin_kb import main_menu_kb_admin
 from aiogram import F
@@ -21,7 +21,7 @@ async def greeting_msg(callback: CallbackQuery, state: FSMContext):
 
     # caption=message_text[lang]['greeting']
     photo = FSInputFile("static/main_menu.jpg")
-    file = InputMediaPhoto(media=photo, caption=message_text[lang]['greeting'])
+    file = InputMediaPhoto(media=photo, caption=message_text[lang]['greeting'], parse_mode="HTML")
     if str(callback.from_user.id) in getenv('ADMINS_ID'):
         await callback.message.edit_media(file, reply_markup=main_menu_kb_admin)
     elif (await db.is_user_creator(str(callback.from_user.id))):
@@ -38,42 +38,54 @@ async def greeting_msg(callback: CallbackQuery, state: FSMContext):
 @main_rt.callback_query(F.data=='offers')
 async def services(callback: CallbackQuery, state: FSMContext):
     lang = await db.get_language(callback.from_user.id)
-    await callback.message.edit_caption(caption=message_text[lang]['offers'], reply_markup=offers_kb)
+    photo = FSInputFile("static/offers.jpg")
+    file = InputMediaPhoto(media=photo, caption=message_text[lang]['offers'], parse_mode="HTML")
+    await callback.message.edit_media(file, reply_markup=offers_kb)
     await callback.answer('')
     await state.clear()
 
 @main_rt.callback_query(F.data=='skin_menu')
 async def skin_menu(callback: CallbackQuery, state: FSMContext):
     lang = await db.get_language(callback.from_user.id)
-    await callback.message.edit_caption(caption=message_text[lang]['skin_menu'], reply_markup=skin_kb)
+    photo = FSInputFile("static/skins.jpg")
+    file = InputMediaPhoto(media=photo, caption=message_text[lang]['skin_menu'], parse_mode='HTML')
+    await callback.message.edit_media(file, reply_markup=skin_kb)
     await callback.answer('')
     await state.clear()
 
 @main_rt.callback_query(F.data=='building_menu')
 async def building_menu(callback: CallbackQuery, state: FSMContext):
     lang = await db.get_language(callback.from_user.id)
-    await callback.message.edit_caption(caption=message_text[lang]['building_menu'], reply_markup=building_kb)
+    photo = FSInputFile("static/buildings.jpg")
+    file = InputMediaPhoto(media=photo, caption=message_text[lang]['building_menu'], parse_mode="HTML")
+    await callback.message.edit_media(file, reply_markup=building_kb)
     await callback.answer('')
     await state.clear() 
 
 @main_rt.callback_query(F.data=='totem_menu')
 async def totem_menu(callback: CallbackQuery, state: FSMContext):
     lang = await db.get_language(callback.from_user.id)
-    await callback.message.edit_caption(caption=message_text[lang]['totem_menu'], reply_markup=totem_kb)
+    photo = FSInputFile("static/totems.jpg")
+    file = InputMediaPhoto(media=photo, caption=message_text[lang]['totem_menu'], parse_mode="HTML")
+    await callback.message.edit_media(file, reply_markup=totem_kb)
     await callback.answer('')
     await state.clear() 
 
 @main_rt.callback_query(F.data=='3d_menu')
 async def three_dim_menu(callback: CallbackQuery, state: FSMContext):
     lang = await db.get_language(callback.from_user.id)
-    await callback.message.edit_caption(caption=message_text[lang]['3d_menu'], reply_markup=three_dim_kb)
+    photo = FSInputFile("static/threedim.jpg")
+    file = InputMediaPhoto(media=photo, caption=message_text[lang]['3d_menu'], parse_mode="HTML")
+    await callback.message.edit_media(file, reply_markup=three_dim_kb)
     await callback.answer('')
     await state.clear() 
 
 @main_rt.callback_query(F.data=='art_menu')
 async def art_menu(callback: CallbackQuery, state: FSMContext):
     lang = await db.get_language(callback.from_user.id)
-    await callback.message.edit_caption(caption=message_text[lang]['art_menu'], reply_markup=art_kb)
+    photo = FSInputFile("static/art.jpg")
+    file = InputMediaPhoto(media=photo, caption=message_text[lang]['art_menu'], parse_mode="HTML")
+    await callback.message.edit_media(file, reply_markup=art_kb)
     await callback.answer('')
     await state.clear() 
 
@@ -99,7 +111,15 @@ async def work(callback: CallbackQuery):
 @main_rt.callback_query(F.data == 'design')
 async def design_offers(callback: CallbackQuery):
     lang = await db.get_language(callback.from_user.id)
-    photo = FSInputFile("static/work.jpg")
+    photo = FSInputFile("static/design.jpg")
     file = InputMediaPhoto(media=photo, caption=message_text[lang]['design'])
     await callback.message.edit_media(file, reply_markup=design_kb)
+    await callback.answer('')
+
+@main_rt.callback_query(F.data=='mod')
+async def mod_menu(callback: CallbackQuery):
+    lang = await db.get_language(callback.from_user.id)
+    photo = FSInputFile("static/mod.jpg")
+    file = InputMediaPhoto(media=photo, caption=message_text[lang]['mod'], parse_mode="HTML")
+    await callback.message.edit_media(file, reply_markup=mod_kb)
     await callback.answer('')
