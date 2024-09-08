@@ -4,7 +4,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 offers_kb = InlineKeyboardMarkup(inline_keyboard=[[
     InlineKeyboardButton(text='Cкин', callback_data='skin_menu'),
     InlineKeyboardButton(text='Постройка', callback_data='building_menu')],
-    [InlineKeyboardButton(text='Мод', callback_data='mod_skill'),
+    [InlineKeyboardButton(text='Мод', callback_data='mod'),
      InlineKeyboardButton(text='Тотем', callback_data="totem_menu")],
     [InlineKeyboardButton(text='3D', callback_data='3d_menu'),
      InlineKeyboardButton(text='Арт', callback_data='art_menu')],
@@ -18,6 +18,11 @@ main_menu_kb = InlineKeyboardMarkup(inline_keyboard=[[
     [InlineKeyboardButton(text='Работа у нас', callback_data='work')],
     [InlineKeyboardButton(text='Помощь', callback_data='help'), 
      InlineKeyboardButton(text="Смена языка", callback_data="choose_lang")
+]])
+
+mod_kb = InlineKeyboardMarkup(inline_keyboard=[[
+    InlineKeyboardButton(text="Заказать мод", callback_data="mod_skill"),
+    InlineKeyboardButton(text='Назад', callback_data="offers")
 ]])
 
 skin_kb = InlineKeyboardMarkup(inline_keyboard=[
