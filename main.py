@@ -10,7 +10,6 @@ from src.setup_commands import commands
 from src.routes.admin_routes import admin_rt
 from src.routes.creator_routes import creator_rt
 from src.routes.payment_routes import payment_rt
-from src.routes.help import help_rt
 
 
 logging.basicConfig(level=logging.INFO)
@@ -23,6 +22,7 @@ async def main():
     bot = Bot(getenv("TG_TOKEN"))
     # from src.middleware.message_delete import DeleteMessage
     from src.middleware.users import InsertUserMiddleware
+    from src.routes.help import help_rt
     await bot.set_my_commands(commands=commands)
 
     dp = Dispatcher()

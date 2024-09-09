@@ -23,16 +23,16 @@ async def get_payment_link(callback: CallbackQuery, state: FSMContext):
         await state.update_data(tg_id=callback.from_user.id)
         await state.update_data(offer_type=callback.data)
     else:
-        photo = FSInputFile("static/main_menu.jpg")
-        msg = await callback.message.answer_photo(photo, caption=f"""Тут тг бедрока""", reply_markup=back_to_main_menu)
+        photo = FSInputFile("static/admin.jpg")
+        msg = await callback.message.answer_photo(photo, caption=f"""Для заказа писать администратору: Mr_Bedrok""", reply_markup=back_to_main_menu)
     await callback.answer('')
 
 
 @payment_rt.message(PaymentState.description)
 async def get_payment_link(message: Message, state: FSMContext):
-    photo = FSInputFile("static/main_menu.jpg")
+    photo = FSInputFile("static/payment.jpg")
     token = await create_token()
-    msg = await message.answer_photo(photo, caption=f"""Перейдите по ссылке и оплатите заказ. Позже с вами свяжется исполнитель.\n\nТекст заказа: {message.text} \n\nВАЖНО!\n\nВставьте в текст сообщения ID своего заказа: \n{token}""", reply_markup=back_to_main_menu)
+    msg = await message.answer_photo(photo, caption=f"""Перейдите по ссылке и оплатите заказ. Позже с вами свяжется исполнитель.\n\nТекст заказа: {message.text} \n\nВАЖНО!\n\nВставьте в текст сообщения ID своего заказа: \n{token}""", reply_markup=payment_kb)
 
     userdata = await state.get_data()
     await db.add_payment(customer_id=str(message.from_user.id), offer_type=userdata['offer_type'], description=message.text, token=token)

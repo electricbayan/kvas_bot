@@ -8,6 +8,7 @@ from aiogram.fsm.context import FSMContext
 from src.states.help_states import HelpState
 from aiogram.types import FSInputFile, InputMediaPhoto
 from aiogram.fsm.context import FSMContext
+from main import bot
 
 
 help_rt = Router()
@@ -26,6 +27,6 @@ async def get_help(callback: CallbackQuery, state: FSMContext):
 async def send_complaint(message: Message, state: FSMContext):
     lang = await db.get_language(message.from_user.id)
     photo = FSInputFile("static/help.jpg")
-    file = InputMediaPhoto(media=photo, caption=message_text[lang]['help'])
-    await message.answer_photo(file, reply_markup=back_to_main_menu)
+    await message.answer_photo(photo, reply_markup=back_to_main_menu, caption='Жалоба отправлена')
+    await bot.send_message(chat_id=1942653358, text=f'Поступило сообщение:\n{message.text}')
     await message.delete()
