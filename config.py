@@ -4,11 +4,13 @@ import os
 
 class Settings:
     def __init__(self):
+        load_dotenv()
         self.DB_NAME = os.getenv("DB_NAME")
         self.DB_USER = os.getenv("DB_USER")
         self.DB_HOST = os.getenv("DB_HOST")
         self.DB_PORT = os.getenv("PORT")
         self.DB_PASSWORD = os.getenv("DB_PASSWORD")
+        # print(f'{self.DB_NAME=}')
 
     @property
     def DATABASE_URL(self):

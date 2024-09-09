@@ -1,7 +1,6 @@
 import json
 import socketio
 from os import getenv
-from pyrogram.client import Client
 from api.database.database import Database
 from main import bot
 import asyncio
@@ -13,13 +12,12 @@ class WrongNickname(Exception):
 
 db = Database()
 sio = socketio.AsyncClient(reconnection=True)
-client_id = getenv('DA_ID')
-client_secret=getenv("DA_TOKEN")
+da_secret = getenv('DA_SECRET')
 
 @sio.on('connect')
 async def connect():
     print('connection established')
-    await sio.emit('add-user', {'token': 'Sm51ybwsZLyUCNJcrQUC', "type": "alert_widget"})
+    await sio.emit('add-user', {'token': da_secret, "type": "alert_widget"})
 
 @sio.event
 async def donation(data):

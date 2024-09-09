@@ -112,7 +112,7 @@ async def work(callback: CallbackQuery):
 async def design_offers(callback: CallbackQuery):
     lang = await db.get_language(callback.from_user.id)
     photo = FSInputFile("static/design.jpg")
-    file = InputMediaPhoto(media=photo, caption=message_text[lang]['design'])
+    file = InputMediaPhoto(media=photo, caption=message_text[lang]['design'], parse_mode='HTML')
     await callback.message.edit_media(file, reply_markup=design_kb)
     await callback.answer('')
 
