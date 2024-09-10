@@ -14,19 +14,19 @@ session_factory = async_sessionmaker(engine)
 
 prices = {
     'mod_skill': 10,
-    'vanil_skin_skill': 10,
-    'pastel_skin_skill': 10,
-    'building_location_skill': 10,
-    'single_building_skill': 10,
-    '2d_totem_skill': 10,
-    '3d_totem_skill': 10,
-    'custom_totem_skill': 10,
-    'art_with_background_skill': 10,
-    'art_without_background_skill': 10,
-    'mob_skill': 10,
-    'item_skill': 10,
-    'logo_skill': 10,
-    'registration_skill': 10
+    'vanil_skin_skill': 140,
+    'pastel_skin_skill': 140,
+    'building_location_skill': 300,
+    'single_building_skill': 150,
+    '2d_totem_skill': 20,
+    '3d_totem_skill': 50,
+    'custom_totem_skill': 90,
+    'art_with_background_skill': 590,
+    'art_without_background_skill': 270,
+    'mob_skill': 150,
+    'item_skill': 60,
+    'logo_skill': 300,
+    'registration_skill': 150
 }
 
 
