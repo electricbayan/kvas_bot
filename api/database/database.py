@@ -145,8 +145,18 @@ class Database:
             creator.is_busy = business
             order_id = None
             if not business:
-                stmt = select(Order).where(and_(Order.is_payed==True, Order.order_type==select(SkillType.name).where(SkillType.id.in_(select(CreatorSkillType.skilltype_id).where(CreatorSkillType.creator_id==creator.tg_id)))))
-                orders = await session.execute(stmt)
+                
+                subq = select(CreatorSkillType.skilltype_id).where(CreatorSkillType.creator_id==creator.tg_id)
+                skilltype_ids = await session.execute(subq)
+                skilltype_ids = skilltype_ids.all()
+                skilltype_ids = [i[0] for i in skilltype_ids]
+                orders_subq = select(SkillType.name).where(SkillType.id.in_(skilltype_ids))
+                skilltypes = await session.execute(orders_subq)
+                skilltypes = skilltypes.all()
+                skilltypes = [i[0] for i in skilltypes]
+
+                query = select(Order).where(and_(Order.is_payed==True, Order.order_type.in_(skilltypes)))
+                orders = await session.execute(query)
                 if orders.scalar():
                     order = orders.scalars().one()
                     order_id = order.id
@@ -218,13 +228,25 @@ class Database:
         async with session_factory() as session:
             stmt = select(SkillType.price).where(SkillType.name.in_(select(Order.order_type).where(Order.token == token)))
             price = await session.execute(stmt)
-            price = price.scalars().one()
+            price = price.scalar()
 
             stmt = select(Order).where(Order.token == token)
             order = await session.execute(stmt)
             order = order.scalars().one()
 
-            stmt = select(CreatorSkillType.creator_id).where(and_(CreatorSkillType.skilltype_id.in_(select(SkillType.id).where(SkillType.name.in_(select(Order.order_type).where(Order.token == token)))), CreatorSkillType.creator_id.in_(select(Creator.tg_id).where(Creator.is_busy==False))))
+            subq = (select(Creator.tg_id).where(Creator.is_busy==False))
+            creators = await session.execute(subq)
+            creators = creators.one()
+            subq = select(Order.order_type).where(Order.token == token)
+            ordertype = await session.execute(subq)
+            ordertype = ordertype.one()
+
+            subq = select(SkillType.id).where(SkillType.name.in_(ordertype))
+            skilltype_id = await session.execute(subq)
+            skilltype_id = skilltype_id.one()
+
+            # print(creators)
+            stmt = select(CreatorSkillType.creator_id).where(and_(CreatorSkillType.skilltype_id.in_(skilltype_id), CreatorSkillType.creator_id.in_(creators)))
             result = await session.execute(stmt)
             try:
                 creator_id = result.scalar()

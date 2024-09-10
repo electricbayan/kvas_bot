@@ -91,13 +91,16 @@ async def art_menu(callback: CallbackQuery, state: FSMContext):
 
 @main_rt.callback_query(F.data == 'my_orders')
 async def my_orders(callback: CallbackQuery):
+    photo = FSInputFile("static/myorders.jpg")
     orders = await db.get_user_orders(str(callback.from_user.id))
 
     msg_text = 'Ваши заказы:\n'
     for num, offer in zip(range(1, 100), orders):
         msg_text += f'{num}. {offer.description}\nID: {offer.token}\n'
 
-    await callback.message.edit_caption(caption=msg_text, reply_markup=back_to_main_menu)
+    file = InputMediaPhoto(media=photo, caption=msg_text)
+
+    await callback.message.edit_media(file, reply_markup=back_to_main_menu)
     await callback.answer('')
 
 @main_rt.callback_query(F.data == 'work')
