@@ -13,7 +13,7 @@ engine = create_async_engine(
 session_factory = async_sessionmaker(engine)
 
 prices = {
-    'mod_skill': 10,
+    'mod_skill': 500,
     'vanil_skin_skill': 140,
     'pastel_skin_skill': 140,
     'building_location_skill': 300,
@@ -34,16 +34,16 @@ class Database:
     @staticmethod
     async def create_tables() -> None:
         async with engine.begin() as con:
-            await con.run_sync(Base.metadata.drop_all)
+            # await con.run_sync(Base.metadata.drop_all)
             await con.run_sync(Base.metadata.create_all)
-        async with session_factory() as session:
-            for ordertype in prices.keys():
-                dataobj = SkillType(name=ordertype, price=prices[ordertype])
-                session.add(dataobj)
-            dataobj = UniqueToken(last_value = '3810920946')
-            session.add(dataobj)
-            await session.flush()
-            await session.commit()
+        # async with session_factory() as session:
+        #     for ordertype in prices.keys():
+        #         dataobj = SkillType(name=ordertype, price=prices[ordertype])
+        #         session.add(dataobj)
+        #     dataobj = UniqueToken(last_value = '3810920946')
+        #     session.add(dataobj)
+        #     await session.flush()
+        #     await session.commit()
 
             
     @staticmethod
@@ -160,7 +160,8 @@ class Database:
                 obj_db = orders.scalars()
                 if obj_db:
                     order = obj_db.first()
-                    order_id = order.id # 
+                    if order:
+                        order_id = order.id # 
                     await self.add_creator_to_order(str(tg_id), order.id)
             await session.flush()
             await session.commit()
