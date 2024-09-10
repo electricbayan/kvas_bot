@@ -157,9 +157,10 @@ class Database:
 
                 query = select(Order).where(and_(Order.is_payed==True, Order.order_type.in_(skilltypes)))
                 orders = await session.execute(query)
-                if orders.scalar():
-                    order = orders.scalars().one()
-                    order_id = order.id
+                obj_db = orders.scalars()
+                if obj_db:
+                    order = obj_db.first()
+                    order_id = order.id # 
                     await self.add_creator_to_order(str(tg_id), order.id)
             await session.flush()
             await session.commit()
@@ -236,19 +237,20 @@ class Database:
 
             subq = (select(Creator.tg_id).where(Creator.is_busy==False))
             creators = await session.execute(subq)
-            creators = creators.one()
+            creators = creators.first()
             subq = select(Order.order_type).where(Order.token == token)
             ordertype = await session.execute(subq)
-            ordertype = ordertype.one()
+            ordertype = ordertype.first()
 
             subq = select(SkillType.id).where(SkillType.name.in_(ordertype))
             skilltype_id = await session.execute(subq)
-            skilltype_id = skilltype_id.one()
-
-            # print(creators)
-            stmt = select(CreatorSkillType.creator_id).where(and_(CreatorSkillType.skilltype_id.in_(skilltype_id), CreatorSkillType.creator_id.in_(creators)))
-            result = await session.execute(stmt)
+            skilltype_id = skilltype_id.first()
+            print('FUNCTIONING')
             try:
+                if not creators:
+                    raise NoResultFound
+                stmt = select(CreatorSkillType.creator_id).where(and_(CreatorSkillType.skilltype_id.in_(skilltype_id), CreatorSkillType.creator_id.in_(creators)))
+                result = await session.execute(stmt)
                 creator_id = result.scalar()
                 stmt = select(Creator.username).where(Creator.tg_id==creator_id)
                 creator_username = await session.execute(stmt)
@@ -256,6 +258,7 @@ class Database:
                 await self.add_creator_to_order(creator_id=creator_id, order_id=order.id)
                 return order, creator_id, price, creator_username
             except NoResultFound:
+                print('EXCEPTION')
                 await self.set_payed_status(True, order.id)
                 return order, None, price, None
         

@@ -19,4 +19,4 @@ class InsertUserMiddleware(BaseMiddleware):
             creator_username = 'null'
             # creator_username = await resolve_username_to_channel_id(message_data.creator_id)
             await bot.send_message(message_data.creator_id, f"Поступил заказ: {message_data.description}, ссылка на заказчика: 'tg://openmessage?user_id={message_data.customer_id}'. Тип заказа: {message_data.order_type}")
-            await bot.send_message(message_data.customer_id, f"Заказ принят! TG исполнителя: {creator_username}\nID: {message_data['token']}")
+            await bot.send_message(message_data.customer_id, f"Заказ принят! TG исполнителя: {creator_username}\nID: {message_data.token}")
