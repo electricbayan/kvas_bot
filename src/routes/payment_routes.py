@@ -24,7 +24,7 @@ async def get_payment_link(callback: CallbackQuery, state: FSMContext):
         await state.update_data(offer_type=callback.data)
     else:
         photo = FSInputFile("static/admin.jpg")
-        msg = await callback.message.answer_photo(photo, caption=f"""Для заказа писать администратору: @Mr_Bedrok""", reply_markup=back_to_main_menu)
+        msg = await callback.message.answer_photo(photo, caption=f"""Для заказа писать администратору: @AlexMedia_Manager""", reply_markup=back_to_main_menu)
     await callback.answer('')
 
 
