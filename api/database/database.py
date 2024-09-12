@@ -114,7 +114,8 @@ class Database:
             else:
                 # for creator_skills_obj in creator_skills.all():
                 #     await session.delete(creator_skills_obj)
-                await session.delete(creator)
+                # await session.delete(creator)
+                creator.is_active = False
                 await session.flush()
                 await session.commit()
 
@@ -131,7 +132,9 @@ class Database:
     async def is_user_creator(tg_id: str) -> bool:
         async with session_factory() as session:
             creator = await session.get(Creator, {'tg_id': tg_id})
-            return bool(creator)
+            if creator:
+                return creator.is_active
+            return False
         
     @staticmethod
     async def is_creator_busy(tg_id: str) -> bool:
@@ -235,7 +238,7 @@ class Database:
             order = await session.execute(stmt)
             order = order.scalars().one()
 
-            subq = (select(Creator.tg_id).where(Creator.is_busy==False))
+            subq = (select(Creator.tg_id).where(and_(Creator.is_busy==False, Creator.is_active==True)))
             creators = await session.execute(subq)
             creators = creators.first()
             subq = select(Order.order_type).where(Order.token == token)

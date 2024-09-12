@@ -20,6 +20,7 @@ class Creator(Base):
     tg_id: Mapped[str] = mapped_column(unique=True, primary_key=True)
     is_busy: Mapped[bool]
     username: Mapped[str] = mapped_column(unique=True)
+    is_active: Mapped[bool] = mapped_column(default=True)
 
 
 class SkillType(Base):
