@@ -33,9 +33,10 @@ prices = {
 class Database:
     @staticmethod
     async def create_tables() -> None:
-        async with engine.begin() as con:
-            # await con.run_sync(Base.metadata.drop_all)
-            await con.run_sync(Base.metadata.create_all)
+        pass
+        # async with engine.begin() as con:
+        #     # await con.run_sync(Base.metadata.drop_all)
+        #     await con.run_sync(Base.metadata.create_all)
         # async with session_factory() as session:
         #     for ordertype in prices.keys():
         #         dataobj = SkillType(name=ordertype, price=prices[ordertype])
@@ -44,6 +45,21 @@ class Database:
         #     session.add(dataobj)
         #     await session.flush()
         #     await session.commit()
+
+    @staticmethod
+    async def reset_db():
+        async with engine.begin() as con:
+            await con.run_sync(Base.metadata.drop_all)
+            await con.run_sync(Base.metadata.create_all)
+
+        async with session_factory() as session:
+            for ordertype in prices.keys():
+                dataobj = SkillType(name=ordertype, price=prices[ordertype])
+                session.add(dataobj)
+            dataobj = UniqueToken(last_value = '3810920946')
+            session.add(dataobj)
+            await session.flush()
+            await session.commit()
 
             
     @staticmethod
