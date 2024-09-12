@@ -155,7 +155,7 @@ class Database:
                 skilltypes = skilltypes.all()
                 skilltypes = [i[0] for i in skilltypes]
 
-                query = select(Order).where(and_(Order.is_payed==True, Order.order_type.in_(skilltypes)))
+                query = select(Order).where(and_(Order.is_payed==True, Order.order_type.in_(skilltypes), not Order.creator_id))
                 orders = await session.execute(query)
                 obj_db = orders.scalars()
                 if obj_db:
