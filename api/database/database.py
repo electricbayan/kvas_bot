@@ -161,8 +161,7 @@ class Database:
                 if obj_db:
                     order = obj_db.first()
                     if order:
-                        order_id = order.id # 
-                    await self.add_creator_to_order(str(tg_id), order.id)
+                        await self.add_creator_to_order(str(tg_id), order.id)
             await session.flush()
             await session.commit()
             return order_id
