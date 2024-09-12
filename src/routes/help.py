@@ -21,7 +21,7 @@ async def get_help(callback: CallbackQuery, state: FSMContext):
     file = InputMediaPhoto(media=photo, caption=message_text[lang]['help'])
     await callback.message.edit_media(file, reply_markup=back_to_main_menu)
     await callback.answer('')
-    await state.set_state(HelpState.msg)
+    # await state.set_state(HelpState.msg)
 
 @help_rt.message(HelpState.msg)
 async def send_complaint(message: Message, state: FSMContext):
