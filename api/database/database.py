@@ -87,7 +87,7 @@ class Database:
         async with session_factory() as session:
             creator = await session.get(Creator, {'tg_id': tg_id})
             statement = select(SkillType).filter_by(name=skill)
-            print(f'{skill=}')
+            # print(f'{skill=}')
             skill_obj = await session.scalars(statement)
             skill_id = skill_obj.one().id
             if not creator:
@@ -245,7 +245,6 @@ class Database:
             subq = select(SkillType.id).where(SkillType.name.in_(ordertype))
             skilltype_id = await session.execute(subq)
             skilltype_id = skilltype_id.first()
-            print('FUNCTIONING')
             try:
                 if not creators:
                     raise NoResultFound
@@ -258,7 +257,6 @@ class Database:
                 await self.add_creator_to_order(creator_id=creator_id, order_id=order.id)
                 return order, creator_id, price, creator_username
             except NoResultFound:
-                print('EXCEPTION')
                 await self.set_payed_status(True, order.id)
                 return order, None, price, None
         
@@ -278,7 +276,7 @@ class Database:
             creators_id = creators_id.scalars().all()
 
             creators_profit = {}
-            print(creators_id)
+            # print(creators_id)
             for creator_id in creators_id:
                 stmt = select(Order.order_type).where(Order.creator_id==creator_id)
                 ordertype = await session.execute(stmt)
