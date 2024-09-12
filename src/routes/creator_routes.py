@@ -56,6 +56,7 @@ async def creator_added(callback: CallbackQuery, state: FSMContext):
     elif callback.data == '3d_skill':
         await db.add_creator(userid, username, 'mob_skill')
         await db.add_creator(userid, username, 'item_skill')
+        await db.add_creator(userid, username, 'custom_totem_skill')
     elif callback.data == 'building_skill':
         await db.add_creator(userid, username, 'building_location_skill')
         await db.add_creator(userid, username, 'single_building_skill')
