@@ -16,7 +16,7 @@ db = Database()
 
 @payment_rt.callback_query(F.data.contains('skill'))
 async def get_payment_link(callback: CallbackQuery, state: FSMContext):
-    if callback.data not in ('building_location_skill', 'single_building_skill', 'mod_skill', 'item_skill', 'mob_skill'):
+    if callback.data not in ('building_location_skill', 'single_building_skill', 'mod_skill', 'item_skill', 'mob_skill', 'logo_skill', 'registration_skill'):
         await callback.message.edit_caption(caption="""Опишите ваши требования к заказу""", reply_markup=payment_back_kb)
         
         await state.set_state(PaymentState.description)
