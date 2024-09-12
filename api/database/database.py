@@ -112,6 +112,7 @@ class Database:
                 session.add(creator_dataobj)
                 session.add(skillrelation_obj)
             else:
+                creator.is_active = True
                 skillrelation_obj = CreatorSkillType(skilltype_id=skill_id, creator_id=creator.tg_id)
                 session.add(skillrelation_obj)
 
