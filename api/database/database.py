@@ -289,7 +289,7 @@ class Database:
                 userid = userid.scalar()
 
                 if userid in creators_profit.keys():
-                    creators_profit[userid] += price
+                    creators_profit[userid] += round(price * 0.7, 2)
                 else:
-                    creators_profit[userid] = price
+                    creators_profit[userid] = round(price * 0.7, 2)
             return creators_profit

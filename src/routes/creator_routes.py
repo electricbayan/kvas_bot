@@ -38,7 +38,7 @@ async def creator_adding(message: Message, state: FSMContext):
         await state.set_state(AddCreator.skills_adding)
     except (UsernameInvalid, UsernameNotOccupied):
         await state.clear()
-        msg = await message.answer('Неверное имя пользователя\n\n' + message_text['ru']['greeting'], reply_markup=back_to_main_menu)
+        msg = await message.answer('Неверное имя пользователя\n\n' + message_text['ru']['greeting'], reply_markup=back_to_main_menu, parse_mode='HTML')
     await message.delete()
     return msg.message_id
 
@@ -69,7 +69,7 @@ async def creator_added(callback: CallbackQuery, state: FSMContext):
     else:
         await db.add_creator(userid, username, callback.data)
     photo = FSInputFile("static/main_menu.jpg")
-    await callback.message.answer_photo(photo, caption=message_text[lang]['greeting'], reply_markup=main_menu_kb_admin)
+    await callback.message.answer_photo(photo, caption=message_text[lang]['greeting'], reply_markup=main_menu_kb_admin, parse_mode='HTML')
     await callback.answer('')
     await state.clear()
     # return msg.message_id
@@ -87,7 +87,7 @@ async def creator_removed(message: Message, state: FSMContext):
     except UserNotFound:
         await message.answer('Пользователь не найден')
     photo = FSInputFile("static/main_menu.jpg")
-    await message.answer_photo(photo, caption=message_text[lang]['greeting'], reply_markup=main_menu_kb_admin)
+    await message.answer_photo(photo, caption=message_text[lang]['greeting'], reply_markup=main_menu_kb_admin, parse_mode='HTML')
     await message.delete()
     await state.clear()
 

@@ -36,7 +36,7 @@ async def admin_added(message: Message, state: FSMContext):
         userid = await resolve_username_to_channel_id(message.text.strip())
         await db.add_admin(str(userid))
         await message.answer('Успешно.')
-        await message.answer(message_text['ru']['greeting'], reply_markup=main_menu_kb_admin)
+        await message.answer(message_text['ru']['greeting'], reply_markup=main_menu_kb_admin, parse_mode='HTML')
     except (UsernameInvalid, UsernameNotOccupied):
         await message.answer('Неверное имя пользователя')
     await state.clear()
@@ -53,7 +53,7 @@ async def admin_removed(message: Message, state: FSMContext):
         await message.answer('Неверное имя пользователя')
     except UserNotFound:
         await message.answer('Пользователь не найден')
-    await message.answer(message_text['ru']['greeting'], reply_markup=main_menu_kb_admin)
+    await message.answer(message_text['ru']['greeting'], reply_markup=main_menu_kb_admin, parse_mode='HTML')
     await state.clear()
 
 @admin_rt.message(Command('profit'))
