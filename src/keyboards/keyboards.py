@@ -70,5 +70,5 @@ back_to_main_menu = InlineKeyboardMarkup(inline_keyboard=[
 design_kb = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Лого', callback_data='logo_skill'),
      InlineKeyboardButton(text='Оформление', callback_data='registration_skill')],
-     [InlineKeyboardButton(text='Назад', callback_data='design')]
+     [InlineKeyboardButton(text='Назад', callback_data='ru')]
 ])
