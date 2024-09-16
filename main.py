@@ -12,7 +12,7 @@ from src.routes.creator_routes import creator_rt
 from src.routes.payment_routes import payment_rt
 
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.ERROR)
 load_dotenv()
 bot = Bot(getenv("TG_TOKEN"))
 db = Database()
